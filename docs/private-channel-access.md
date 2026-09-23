@@ -15,7 +15,7 @@ The most popular use of funnelbot: customers pay, and the bot lets them into a *
 
 **3. Get the channel id.** Post a message `/id` in the channel. The bot answers with a line like `This chat id: -1001234567890`. Copy the number, then delete both messages. (For a group, send `/id` in the group.)
 
-**4. Put it into a product.**
+**4. Put it into a product.** The easiest way is in the bot: `/admin` → **🛠 Build the funnel** → **🛍 Products** → open (or create) the product → **➕ What they get** → **📢 Access to a private channel**, then send the id and choose the duration. If you prefer the file, use this:
 
 ```yaml
 products:
