@@ -1,0 +1,39 @@
+# A paid private channel: 30 days of access, reminders, renewal.
+# Copy it next to a .env file that defines BOT_TOKEN, ADMIN_ID and CHANNEL_ID.
+
+bot:
+  language: en
+  admins: ["${ADMIN_ID:-}"]
+
+consent:
+  text: "Please confirm you agree to the terms."
+  documents:
+    - {title: Terms, url: "https://example.com/terms"}
+
+payments:
+  stars: true
+
+products:
+  club:
+    title: Members club
+    description: A private channel with new material every week.
+    prices: {XTR: 500}
+    access:
+      - channel: {chat: "${CHANNEL_ID:--1001234567890}", days: 30, remind_days: [3, 1]}
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Hi, <b>{first_name}</b>! Here is what the club gives you."
+    buttons:
+      - [{text: Join for 500 ⭐, pay: club, style: success}]
+    nudges:
+      - after: 3h
+        text: "Still thinking? The club is open for new members."
+        buttons:
+          - [{text: Join, pay: club, style: success}]
+      - after: 1d
+        text: "Last reminder from me: the club is waiting for you."
+        buttons:
+          - [{text: Join, pay: club, style: success}]

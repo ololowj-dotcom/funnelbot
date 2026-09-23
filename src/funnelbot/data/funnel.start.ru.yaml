@@ -1,0 +1,18 @@
+# Стартовая воронка funnelbot. Соберите свою кнопками: отправьте боту /admin и нажмите «Собрать воронку».
+# Файл можно править и вручную: `funnelbot validate` проверит его, а «Перезагрузить воронку» в /admin применит.
+
+bot:
+  language: ru
+  admins: ["${ADMIN_ID:-}"]
+
+payments:
+  stars: true
+
+products: {}
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Здравствуйте, <b>{first_name}</b>! Это ваш бот. Откройте /admin и нажмите «Собрать воронку», чтобы настроить шаги, кнопки и продукты."
+    end: true

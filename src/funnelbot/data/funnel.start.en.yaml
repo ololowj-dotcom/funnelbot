@@ -1,0 +1,18 @@
+# Starter funnel for funnelbot. Build your own with buttons: send /admin to the bot and press "Build the funnel".
+# You can also edit this file by hand: `funnelbot validate` checks it and "Reload funnel" in /admin applies it.
+
+bot:
+  language: en
+  admins: ["${ADMIN_ID:-}"]
+
+payments:
+  stars: true
+
+products: {}
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Hi, <b>{first_name}</b>! This is your bot. Open /admin and press \"Build the funnel\" to set up steps, buttons and products."
+    end: true

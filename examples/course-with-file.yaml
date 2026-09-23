@@ -1,0 +1,49 @@
+# A digital product: after payment the customer gets a message and a file.
+# Put the file at files/course.pdf next to this funnel, or use an https:// link.
+# Cards and YooKassa are added next to Stars; digital goods should always include Stars.
+
+bot:
+  language: en
+  admins: ["${ADMIN_ID:-}"]
+
+payments:
+  stars: true
+  yookassa:
+    shop_id: "${YOOKASSA_SHOP_ID:-shop}"
+    secret_key: "${YOOKASSA_SECRET_KEY:-secret}"
+    return_url: https://t.me/your_bot
+    receipt: {vat_code: 1, contact_key: email}
+
+products:
+  course:
+    title: Video course
+    description: Six lessons with a workbook.
+    prices: {XTR: 1500, RUB: 4900}
+    access:
+      - message:
+          text: "Thank you, {first_name}! Your course is attached."
+          files: ["https://example.com/course.pdf"]
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Hi, <b>{first_name}</b>! I sell a short practical course."
+    buttons:
+      - [{text: Tell me more, goto: ask_email, style: primary}]
+
+  ask_email:
+    text: "Where should I send your receipt? Enter your email."
+    ask: {key: email, type: email, error: "That does not look like an email, please try again."}
+    next: offer
+
+  offer:
+    text: "Great, {email}. The course costs 1500 ⭐ or 4900 RUB."
+    pay: course
+    paid: thanks
+    buttons:
+      - [{back: true, text: "← Back"}]
+
+  thanks:
+    text: "You are all set. Write here if you have any questions."
+    end: true

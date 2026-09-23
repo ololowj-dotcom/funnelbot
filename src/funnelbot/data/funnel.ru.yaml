@@ -1,0 +1,84 @@
+# Файл воронки funnelbot.
+# Проверить в любой момент:  funnelbot validate
+# Попробовать в консоли:     funnelbot preview
+# Секреты лежат в файле .env рядом с этим файлом и подставляются как ${NAME}.
+
+bot:
+  language: ru
+  admins: ["${ADMIN_ID:-}"]      # id пользователей Telegram, которым доступны /stats, /leads, /broadcast, /grant, /refund
+  manager_chat: ${MANAGER_CHAT:-}  #manager
+  pay_style: success             # цвет кнопок оплаты: primary (синий), success (зелёный), danger (красный) или none
+
+consent:
+  text: "Прежде чем начать, подтвердите, что вы согласны с условиями ниже."
+  documents:
+    - {title: Оферта, url: "https://example.com/terms"}
+    - {title: Политика конфиденциальности, url: "https://example.com/privacy"}
+
+payments:
+  stars: true                    # Telegram Stars: не требует счетов, обязательны для цифровых товаров
+  # telegram:                    # банковские карты через провайдера, подключённого в @BotFather
+  #   provider_token: ${PROVIDER_TOKEN}
+  #   currency: RUB
+  # yookassa:                    # ссылки на оплату ЮKassa, подтверждаются опросом (вебхук не нужен)
+  #   shop_id: ${YOOKASSA_SHOP_ID}
+  #   secret_key: ${YOOKASSA_SECRET_KEY}
+  #   return_url: https://t.me/your_bot
+  # crypto:                      # счета Crypto Pay (@CryptoBot)
+  #   token: ${CRYPTO_PAY_TOKEN}
+  #   asset: USDT
+  # manual:                      # клиент переводит деньги и присылает скриншот, менеджер подтверждает
+  #   text: "Переведите сумму на карту 0000 0000 0000 0000 и пришлите скриншот."
+  #   currency: RUB
+
+products:
+  club:
+    title: Закрытый клуб
+    description: Закрытый канал с еженедельными материалами.
+    prices: {XTR: 500}           # цены по валютам: XTR (Stars), RUB, USDT ...
+    access:
+      - channel: {chat: -1001234567890, days: 30, remind_days: [3, 1]}  # замените на id вашего канала
+  guide:
+    title: Гайд
+    description: Короткое практическое руководство.
+    prices: {XTR: 150}
+    access:
+      - message: {text: "Ваш гайд, {first_name}. Приятного чтения!", file: files/guide.txt}
+  consult:                       #manager
+    title: Консультация          #manager
+    description: Час работы с экспертом.  #manager
+    prices: {XTR: 1500}          #manager
+    access:                      #manager
+      - manager: {text: "Спасибо! Мы напишем вам в течение суток."}  #manager
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Здравствуйте, <b>{first_name}</b>! Покажу, что у нас есть."
+    buttons:
+      - [{text: Что внутри, goto: offer, style: primary}]
+      - [{text: Задать вопрос, manager: true}]  #manager
+    nudges:
+      - after: 3h
+        text: "Всё ещё думаете? Загляните в предложение."
+        buttons:
+          - [{text: Показать предложение, goto: offer, style: success}]
+
+  offer:
+    text: "Выберите, что вам нужно:"
+    paid: thanks
+    buttons:
+      - [{text: Закрытый клуб, pay: club}]
+      - [{text: Гайд, pay: guide}]
+      - [{text: Консультация, pay: consult}]  #manager
+      - [{back: true, text: "← Назад"}]
+    nudges:
+      - after: 24h
+        text: "Клуб сейчас открыт для участников."
+        buttons:
+          - [{text: Вступить в клуб, pay: club, style: success}]
+
+  thanks:
+    text: "Готово, {first_name}. Пишите сюда, если понадобится помощь."
+    end: true

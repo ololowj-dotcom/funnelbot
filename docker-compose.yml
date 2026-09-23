@@ -1,0 +1,6 @@
+services:
+  funnelbot:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./bot:/data

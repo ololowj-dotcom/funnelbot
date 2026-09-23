@@ -1,0 +1,49 @@
+# A service: the customer pays, answers two questions and a manager gets the order card.
+# Needs a manager chat: add the bot to a group, send /id there and put the number in MANAGER_CHAT.
+
+bot:
+  language: en
+  admins: ["${ADMIN_ID:-}"]
+  manager_chat: "${MANAGER_CHAT:--100500}"
+
+payments:
+  stars: true
+  manual:
+    text: "Transfer the amount to card 0000 0000 0000 0000 and send a screenshot here."
+    currency: RUB
+
+products:
+  consult:
+    title: One-hour consultation
+    description: A video call with an expert.
+    prices: {XTR: 2000, RUB: 6000}
+    access:
+      - manager: {text: "Thank you! We will contact you within a day to agree on a time."}
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Hi, <b>{first_name}</b>! Book a consultation in two steps."
+    buttons:
+      - [{text: Book, goto: topic, style: primary}]
+      - [{text: Ask a question first, manager: true}]
+
+  topic:
+    text: "What would you like to discuss?"
+    ask: {key: topic, type: choice, choices: [Marketing, Sales, Something else]}
+    next: phone
+
+  phone:
+    text: "Send a phone number where we can reach you."
+    ask: {key: phone, type: phone}
+    next: pay
+
+  pay:
+    text: "Topic: {topic}. Choose how to pay:"
+    pay: consult
+    paid: thanks
+
+  thanks:
+    text: "Your order is with the manager."
+    end: true

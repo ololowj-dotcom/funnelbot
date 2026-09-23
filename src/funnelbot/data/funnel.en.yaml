@@ -1,0 +1,84 @@
+# funnelbot funnel file.
+# Check it any time with:  funnelbot validate
+# Try it in the console:   funnelbot preview
+# Secrets live in the .env file next to this file and are referenced as ${NAME}.
+
+bot:
+  language: en
+  admins: ["${ADMIN_ID:-}"]      # Telegram user ids that may use /stats, /leads, /broadcast, /grant, /refund
+  manager_chat: ${MANAGER_CHAT:-}  #manager
+  pay_style: success             # colour of pay buttons: primary (blue), success (green), danger (red) or none
+
+consent:
+  text: "Before we start, please confirm you agree to the terms below."
+  documents:
+    - {title: Terms of service, url: "https://example.com/terms"}
+    - {title: Privacy policy, url: "https://example.com/privacy"}
+
+payments:
+  stars: true                    # Telegram Stars: works without any account, required for digital goods
+  # telegram:                    # bank cards through a provider connected in @BotFather
+  #   provider_token: ${PROVIDER_TOKEN}
+  #   currency: RUB
+  # yookassa:                    # YooKassa payment links, confirmed by polling (no webhook needed)
+  #   shop_id: ${YOOKASSA_SHOP_ID}
+  #   secret_key: ${YOOKASSA_SECRET_KEY}
+  #   return_url: https://t.me/your_bot
+  # crypto:                      # Crypto Pay (@CryptoBot) invoices
+  #   token: ${CRYPTO_PAY_TOKEN}
+  #   asset: USDT
+  # manual:                      # customer pays by transfer and sends a screenshot, a manager approves
+  #   text: "Transfer the amount to card 0000 0000 0000 0000 and send a screenshot."
+  #   currency: RUB
+
+products:
+  club:
+    title: Private club
+    description: Closed channel with weekly materials.
+    prices: {XTR: 500}           # prices per currency: XTR (Stars), RUB, USDT ...
+    access:
+      - channel: {chat: -1001234567890, days: 30, remind_days: [3, 1]}  # replace with your channel id
+  guide:
+    title: Guide
+    description: A short practical guide.
+    prices: {XTR: 150}
+    access:
+      - message: {text: "Here is your guide, {first_name}. Enjoy!", file: files/guide.txt}
+  consult:                       #manager
+    title: Consultation          #manager
+    description: One hour with an expert.  #manager
+    prices: {XTR: 1500}          #manager
+    access:                      #manager
+      - manager: {text: "Thanks! We will write to you within a day."}  #manager
+
+start: welcome
+
+steps:
+  welcome:
+    text: "Hi, <b>{first_name}</b>! I will show what we have to offer."
+    buttons:
+      - [{text: What is inside, goto: offer, style: primary}]
+      - [{text: Ask a question, manager: true}]  #manager
+    nudges:
+      - after: 3h
+        text: "Still thinking? Take a look at the offer."
+        buttons:
+          - [{text: Show the offer, goto: offer, style: success}]
+
+  offer:
+    text: "Choose what you need:"
+    paid: thanks
+    buttons:
+      - [{text: Private club, pay: club}]
+      - [{text: Guide, pay: guide}]
+      - [{text: Consultation, pay: consult}]  #manager
+      - [{back: true, text: "← Back"}]
+    nudges:
+      - after: 24h
+        text: "The club is open for members right now."
+        buttons:
+          - [{text: Join the club, pay: club, style: success}]
+
+  thanks:
+    text: "All set, {first_name}. Write here if you need anything."
+    end: true
